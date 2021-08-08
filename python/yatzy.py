@@ -105,7 +105,7 @@ class Yatzy:
             counts[3] == 1 and
             counts[4] == 1):
             if counts[0] == 1 or counts[5] == 1:
-                return 15
+                return 30
         return 0
 
     def largeStraight(self):
@@ -116,7 +116,7 @@ class Yatzy:
             counts[3] == 1 and
             counts[4] == 1
             and counts[5] == 1):
-            return 20
+            return 40
         return 0
 
     def fullHouse(self):
@@ -139,6 +139,6 @@ class Yatzy:
                 _3_at = i+1
 
         if (_2 and _3):
-            return _2_at * 2 + _3_at * 3
+            return 25
         else:
             return 0
