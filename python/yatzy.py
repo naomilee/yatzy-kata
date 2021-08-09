@@ -1,5 +1,5 @@
 class Yatzy:
-    """ This is a class for computing the yatzy score for a given dice roll in a given category """
+    """ This is a class for computing the Yatzy score for a given dice roll in a given category """
 
     def __init__(self, d1, d2, d3, d4, d5):
         self.dice = [0] * 5
@@ -12,7 +12,9 @@ class Yatzy:
     # Helper methods:
 
     def _sum_single_value(self, value):
-        """ Helper for scoring: "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes" """
+        """ Helper for scoring: "Ones", "Twos", "Threes", "Fours", "Fives", "Sixes"
+
+        Sums each of the dice which have the specified value """
         total = 0
         for die in self.dice:
             if die == value:
@@ -21,12 +23,24 @@ class Yatzy:
         return total
 
     def _get_die_counts(self):
-        """ Helper method: Computes a counts dictionary for the dice values """
+        """ Helper method: Computes a counts dictionary for the dice values
+
+         The counts dictionary is 0-indexed and therefore stores the count
+         for value x at index x - 1 """
         counts = [0] * 6
         for die in self.dice:
             counts[die - 1] += 1
 
         return counts
+
+    def _score_x_of_a_kind(self, x):
+        """ Helper for scoring: "Three of a Kind", "Four of a Kind" """
+        counts = self._get_die_counts()
+
+        for i in range(6):
+            if counts[i] >= x:
+                return (i + 1) * x
+        return 0
 
     # Score computers:
 
@@ -34,6 +48,10 @@ class Yatzy:
         return sum(self.dice)
 
     def yatzy(self):
+        # This method could be implemented using self._score_x_of_a_kind(5) for consistency
+        # with the related scores ("Three of a Kind", "Four of a Kind") and therefore improved
+        # maintainability, but this is intentionally implemented in a different way as the
+        # purpose of this assignment is to generate a conversation about code
         if len(set(self.dice)) == 1:
             return 50
         return 0
@@ -59,7 +77,7 @@ class Yatzy:
     def score_pair(self):
         counts = self._get_die_counts()
 
-        # Find the highest pair
+        # Looking for the highest pair, so walk backwards
         for i in range(5, -1, -1):
             if counts[i] == 2:
                 return (i + 1) * 2
@@ -70,7 +88,9 @@ class Yatzy:
 
         pairs_found = 0
         score = 0
-        for i in range(5, -1, -1):
+        # We want the highest two-pair possible, but it is not necessary to walk
+        # backwards because there are at most 2 two-pairs in our 5 total dice
+        for i in range(6):
             # Check for case where there are two doubles of different values
             if counts[i] in [2, 3]:
                 pairs_found += 1
@@ -86,20 +106,10 @@ class Yatzy:
             return 0
 
     def four_of_a_kind(self):
-        counts = self._get_die_counts()
-
-        for i in range(6):
-            if counts[i] >= 4:
-                return (i + 1) * 4
-        return 0
+        return self._score_x_of_a_kind(4)
 
     def three_of_a_kind(self):
-        counts = self._get_die_counts()
-
-        for i in range(6):
-            if counts[i] >= 3:
-                return (i + 1) * 3
-        return 0
+        return self._score_x_of_a_kind(3)
 
     def small_straight(self):
         counts = self._get_die_counts()
