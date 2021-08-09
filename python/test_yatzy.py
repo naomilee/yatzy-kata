@@ -30,6 +30,7 @@ def test_2s():
 def test_threes():
     assert 6 == Yatzy(1, 2, 3, 2, 3).threes()
     assert 12 == Yatzy(2, 3, 3, 3, 3).threes()
+    assert 0 == Yatzy(1, 2, 4, 5, 6).threes()
 
 
 def test_fours_test():
@@ -77,8 +78,9 @@ def test_four_of_a_knd():
 
 
 def test_small_straight():
-    assert 30 == Yatzy(1, 2, 3, 4, 5).small_straight()
-    assert 30 == Yatzy(2, 3, 4, 5, 1).small_straight()
+    assert 30 == Yatzy(3, 6, 3, 4, 5).small_straight()
+    assert 30 == Yatzy(2, 3, 4, 5, 3).small_straight()
+    assert 30 == Yatzy(2, 3, 4, 4, 1).small_straight()
     assert 0 == Yatzy(1, 2, 2, 4, 5).small_straight()
 
 
