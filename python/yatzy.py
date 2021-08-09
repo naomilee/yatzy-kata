@@ -1,4 +1,5 @@
 class Yatzy:
+    """ This is a class for computing the yatzy score for a given dice roll in a given category """
 
     def __init__(self, d1, d2, d3, d4, d5):
         self.dice = [0] * 5
@@ -33,10 +34,8 @@ class Yatzy:
         return sum(self.dice)
 
     def yatzy(self):
-        counts = self._get_die_counts()
-        for i in range(len(counts)):
-            if counts[i] == 5:
-                return 50
+        if len(set(self.dice)) == 1:
+            return 50
         return 0
 
     def ones(self):
@@ -60,23 +59,29 @@ class Yatzy:
     def score_pair(self):
         counts = self._get_die_counts()
 
-        for at in range(6):
-            if counts[6 - at - 1] == 2:
-                return (6 - at) * 2
+        # Find the highest pair
+        for i in range(5, -1, -1):
+            if counts[i] == 2:
+                return (i + 1) * 2
         return 0
 
     def two_pair(self):
         counts = self._get_die_counts()
 
-        n = 0
+        pairs_found = 0
         score = 0
-        for i in range(6):
-            if counts[6 - i - 1] >= 2:
-                n = n + 1
-                score += (6 - i)
+        for i in range(5, -1, -1):
+            # Check for case where there are two doubles of different values
+            if counts[i] in [2, 3]:
+                pairs_found += 1
+                score += 2 * (i + 1)
+            # Check for the case where there are two doubles of the same value
+            elif counts[i] == 4:
+                pairs_found = 2
+                score = 4 * (i + 1)
 
-        if n == 2:
-            return score * 2
+        if pairs_found == 2:
+            return score
         else:
             return 0
 
@@ -99,44 +104,35 @@ class Yatzy:
     def small_straight(self):
         counts = self._get_die_counts()
 
-        if (counts[1] == 1 and
-                counts[2] == 1 and
-                counts[3] == 1 and
-                counts[4] == 1):
-            if counts[0] == 1 or counts[5] == 1:
-                return 30
+        score = 30
+        # There are 3 ways to get a small straight: 1-4, 2-5, 3-6
+        # Note that the counts don't necessarily have to be 1's
+        if counts[0] and counts[1] and counts[2] and counts[3]:
+            return score
+        if counts[1] and counts[2] and counts[3] and counts[4]:
+            return score
+        if counts[2] and counts[3] and counts[4] and counts[5]:
+            return score
+        # We could remove some redundant work in this function, but it would add code complexity
+        # disproportionally to the amount of performance gain we would get
+
         return 0
 
     def large_straight(self):
         counts = self._get_die_counts()
 
+        # If values 2 through 5 were each gotten exactly once, then the last die must be either a 1 or a 6
         if (counts[1] == 1 and
                 counts[2] == 1 and
                 counts[3] == 1 and
-                counts[4] == 1
-                and counts[5] == 1):
+                counts[4] == 1):
             return 40
         return 0
 
     def full_house(self):
-        _2 = False
-        _2_at = 0
-        _3 = False
-        _3_at = 0
-
         counts = self._get_die_counts()
 
-        for i in range(6):
-            if counts[i] == 2:
-                _2 = True
-                _2_at = i + 1
-
-        for i in range(6):
-            if counts[i] == 3:
-                _3 = True
-                _3_at = i + 1
-
-        if _2 and _3:
+        if 2 in counts and 3 in counts:
             return 25
         else:
             return 0
